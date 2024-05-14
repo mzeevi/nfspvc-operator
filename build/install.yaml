@@ -16,7 +16,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: nfspvc-operator-system/nfspvc-operator-serving-cert
-    controller-gen.kubebuilder.io/version: v0.13.0
+    controller-gen.kubebuilder.io/version: v0.14.0
   name: nfspvcs.nfspvc.dana.io
 spec:
   conversion:
@@ -43,14 +43,19 @@ spec:
         description: NfsPvc is the Schema for the nfspvcs API
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             type: string
           metadata:
             type: object
@@ -268,6 +273,8 @@ rules:
   - watch
   - create
   - delete
+  - update
+  - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -441,7 +448,7 @@ spec:
         envFrom:
         - configMapRef:
             name: nfspvc-operator-configuration-nfspvc
-        image: ghcr.io/dana-team/nfspvc-operator:main
+        image: controller:latest
         livenessProbe:
           httpGet:
             path: /healthz
@@ -480,7 +487,7 @@ spec:
         - --upstream=http://127.0.0.1:8080/
         - --logtostderr=true
         - --v=0
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0
+        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.1
         name: kube-rbac-proxy
         ports:
         - containerPort: 8443
